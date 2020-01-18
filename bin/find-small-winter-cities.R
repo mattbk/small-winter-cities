@@ -43,15 +43,8 @@ us_urban_joined <- left_join(urban_areas_geom,
                     us_urban,
                     by = c("GEOID10" = "GEOID"))
 
-# Prove you can plot the largest cities
-ggplot(us_urban_joined %>% filter(estimate > 5000000)) +
-    geom_sf(aes(fill = estimate),
-            color = NA) +
-    theme_minimal() +
-    scale_fill_viridis()
-
 # Define range of populations to include
-gfk_pop <- us_urban_clean %>%
+gfk_pop <- us_urban_joined %>%
                 filter(NAME == "Grand Forks, ND--MN Urbanized Area (2010)") %>%
                 mutate(high = estimate + (estimate * 0.1),
                        low = estimate - (estimate * 0.1))
@@ -62,6 +55,13 @@ us_urban_clean <- us_urban_joined %>%
                     st_centroid() %>%
                     filter(estimate < gfk_pop[['high']],
                            estimate > gfk_pop[['low']])
+
+plot(us_urban_clean['estimate'])
+
+ggplot(us_urban_clean) +
+    geom_sf(aes(color = estimate)) +
+    scale_color_viridis() +
+    theme_minimal()
 
 # TODO bring in climate data
 
